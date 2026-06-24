@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Matematika Dasar · Materi & Latihan Acak — PGSD UPI Kampus Serang</title>
+<style>
+  :root{
+    --paper:#F5F6FB; --card:#FFFFFF; --ink:#16202E; --ink-soft:#586277; --ink-faint:#8A93A6;
+    --line:#E3E7F0; --grid:rgba(43,74,203,.055);
+    --blue:#2B4ACB; --blue-d:#1E37A8; --blue-soft:#EAEDFB; --blue-line:#C9D2F6;
+    --red:#D6443C; --red-soft:#FBEAE9;
+    --green:#1E8A57; --green-soft:#E5F3EC;
+    --amber:#E8B23A; --amber-soft:#FBF1D8;
+    --radius:14px;
+    --serif:"Iowan Old Style","Palatino Linotype",Georgia,"Times New Roman",serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SFMono-Regular",ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",Menlo,monospace;
+    --shadow:0 1px 2px rgba(22,32,46,.05),0 8px 24px rgba(22,32,46,.06);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; color:var(--ink); font-family:var(--sans); line-height:1.6;
+    background-color:var(--paper);
+    background-image:
+      linear-gradient(var(--grid) 1px,transparent 1px),
+      linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+    background-size:26px 26px;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--blue)}
+
+  /* ---------- Masthead ---------- */
+  header.mast{
+    position:sticky; top:0; z-index:30;
+    background:rgba(245,246,251,.86); backdrop-filter:saturate(140%) blur(10px);
+    border-bottom:2px solid var(--blue);
+  }
+  .mast-in{max-width:1200px; margin:0 auto; padding:14px 22px;
+    display:flex; align-items:center; gap:16px; flex-wrap:wrap}
+  .glyph{
+    width:42px;height:42px;border-radius:11px;flex:0 0 auto;
+    background:var(--blue); color:#fff; display:grid; place-items:center;
+    font-family:var(--serif); font-weight:700; font-size:22px;
+    box-shadow:0 4px 12px rgba(43,74,203,.35);
+  }
+  .mast h1{font-family:var(--serif); font-weight:700; font-size:1.18rem; margin:0; letter-spacing:.2px}
+  .mast .sub{margin:1px 0 0; font-size:.82rem; color:var(--ink-soft)}
+  .mast .tag{margin-left:auto; font-size:.72rem; color:var(--blue-d);
+    background:var(--blue-soft); border:1px solid var(--blue-line);
+    padding:5px 11px; border-radius:999px; font-weight:600}
+
+  /* ---------- Subnav (topics) ---------- */
+  nav.menu{position:sticky; top:60px; z-index:20;
+    background:rgba(245,246,251,.92); border-bottom:1px solid var(--line)}
+  .menu-in{max-width:1200px; margin:0 auto; padding:8px 16px;
+    display:flex; gap:8px; overflow-x:auto; -webkit-overflow-scrolling:touch}
+  .menu-in::-webkit-scrollbar{height:0}
+  .menu button{
+    flex:0 0 auto; cursor:pointer; border:1px solid var(--line); background:var(--card);
+    color:var(--ink-soft); font-family:var(--sans); font-size:.83rem; font-weight:600;
+    padding:7px 13px; border-radius:999px; display:flex; align-items:center; gap:7px;
+    transition:.16s; white-space:nowrap;
+  }
+  .menu button .n{font-family:var(--serif); font-weight:700; color:var(--ink-faint)}
+  .menu button:hover{border-color:var(--blue-line); color:var(--ink)}
+  .menu button.aktif{background:var(--blue); color:#fff; border-color:var(--blue)}
+  .menu button.aktif .n{color:rgba(255,255,255,.7)}
+
+  /* ---------- Layout ---------- */
+  main{max-width:1200px; margin:0 auto; padding:26px 22px 70px}
+  .topik{display:none}
+  .topik.show{display:block; animation:rise .28s ease}
+  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  .topik-head{display:flex; align-items:baseline; gap:14px; margin:4px 0 18px}
+  .topik-head .big{font-family:var(--serif); font-weight:700; font-size:2.1rem; color:var(--blue);
+    line-height:1; flex:0 0 auto}
+  .topik-head h2{font-family:var(--serif); margin:0; font-size:1.5rem; font-weight:700}
+  .topik-head .lead{margin:3px 0 0; color:var(--ink-soft); font-size:.92rem}
+
+  .grid{display:grid; grid-template-columns:1.05fr .95fr; gap:22px; align-items:start}
+  @media(max-width:880px){.grid{grid-template-columns:1fr}}
+
+  /* ---------- Cards & content ---------- */
+  .card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    box-shadow:var(--shadow); padding:20px 22px; margin-bottom:18px}
+  .card h3{font-family:var(--serif); font-size:1.12rem; margin:0 0 10px; font-weight:700}
+  .card h4{font-size:.96rem; margin:16px 0 6px; color:var(--ink); font-weight:700}
+  .card p{margin:8px 0}
+  .card ul{margin:8px 0; padding-left:20px}
+  .card li{margin:4px 0}
+  .muted{color:var(--ink-soft)}
+  .kbd{font-family:var(--mono); background:var(--blue-soft); color:var(--blue-d);
+    padding:1px 6px; border-radius:5px; font-size:.92em}
+  .eyebrow{font-size:.72rem; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--blue-d); font-weight:700; margin:0 0 6px}
+
+  /* formula block */
+  .rumus{font-family:var(--mono); font-size:.96rem; background:var(--blue-soft);
+    border-left:3px solid var(--blue); border-radius:8px; padding:11px 14px; margin:10px 0;
+    color:var(--ink); overflow-x:auto}
+  .rumus b{color:var(--blue-d)}
+  .note{background:var(--amber-soft); border-left:3px solid var(--amber); border-radius:8px;
+    padding:10px 14px; margin:10px 0; font-size:.9rem}
+
+  sup{font-size:.72em}
+  .frac{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center;
+    font-size:.86em; line-height:1.05; margin:0 2px}
+  .frac span:first-child{border-bottom:1.5px solid currentColor; padding:0 4px}
+  .frac span:last-child{padding:0 4px}
+
+  /* tables */
+  table.tbl{width:100%; border-collapse:collapse; margin:10px 0; font-size:.9rem}
+  table.tbl th,table.tbl td{border:1px solid var(--line); padding:7px 9px; text-align:center}
+  table.tbl thead th{background:var(--blue-soft); color:var(--blue-d); font-weight:700}
+  table.tbl td.t{color:var(--green); font-weight:700; font-family:var(--mono)}
+  table.tbl td.f{color:var(--red); font-weight:700; font-family:var(--mono)}
+  table.tbl td.op{font-family:var(--mono)}
+
+  svg.venn,svg.sketch{display:block; max-width:340px; width:100%; height:auto; margin:8px auto}
+
+  /* ---------- Latihan engine ---------- */
+  .latihan{position:sticky; top:118px}
+  @media(max-width:880px){.latihan{position:static}}
+  .lat-head{display:flex; align-items:center; gap:10px; margin:0 0 12px}
+  .lat-head h3{margin:0}
+  .skor{margin-left:auto; font-family:var(--mono); font-size:.8rem; font-weight:700;
+    color:var(--blue-d); background:var(--blue-soft); border:1px solid var(--blue-line);
+    padding:4px 11px; border-radius:999px}
+  .soal{font-size:1.02rem; margin:6px 0 14px; line-height:1.65}
+  .soal .expr{font-family:var(--mono); background:var(--paper); border:1px solid var(--line);
+    padding:1px 7px; border-radius:6px; display:inline-block; margin:2px 0}
+  .opsi-wrap{display:flex; flex-direction:column; gap:9px; margin-bottom:14px}
+  button.opsi{display:flex; align-items:center; gap:11px; text-align:left; cursor:pointer;
+    background:var(--card); border:1.5px solid var(--line); border-radius:10px;
+    padding:11px 13px; font-family:var(--sans); font-size:.96rem; color:var(--ink);
+    transition:.14s; width:100%}
+  button.opsi .lab{flex:0 0 auto; width:25px; height:25px; border-radius:7px;
+    background:var(--paper); border:1px solid var(--line); display:grid; place-items:center;
+    font-family:var(--serif); font-weight:700; font-size:.85rem; color:var(--ink-soft)}
+  button.opsi .txt{font-family:var(--mono); font-size:.93rem}
+  button.opsi:hover:not(:disabled){border-color:var(--blue); background:#FCFDFF}
+  button.opsi:focus-visible{outline:3px solid var(--blue-line); outline-offset:2px}
+  button.opsi:disabled{cursor:default}
+  button.opsi.benar{border-color:var(--green); background:var(--green-soft)}
+  button.opsi.benar .lab{background:var(--green); color:#fff; border-color:var(--green)}
+  button.opsi.salah{border-color:var(--red); background:var(--red-soft)}
+  button.opsi.salah .lab{background:var(--red); color:#fff; border-color:var(--red)}
+  button.opsi.redup{opacity:.55}
+
+  .fb{font-weight:700; font-size:.95rem; min-height:0; margin-bottom:6px}
+  .fb.ok{color:var(--green)} .fb.no{color:var(--red)}
+  .bahas{display:none; background:var(--paper); border:1px dashed var(--blue-line);
+    border-radius:10px; padding:12px 14px; font-size:.92rem; margin-bottom:14px}
+  .bahas b{color:var(--blue-d)}
+  .bahas .expr{font-family:var(--mono); background:#fff; border:1px solid var(--line);
+    padding:0 5px; border-radius:5px}
+
+  .lat-btns{display:flex; gap:10px; flex-wrap:wrap}
+  button.act{cursor:pointer; font-family:var(--sans); font-weight:600; font-size:.9rem;
+    border-radius:9px; padding:9px 16px; border:1.5px solid var(--blue); background:var(--blue);
+    color:#fff; transition:.15s}
+  button.act:hover{background:var(--blue-d)}
+  button.ghost{background:transparent; color:var(--blue-d); border-color:var(--blue-line)}
+  button.ghost:hover{background:var(--blue-soft)}
+  button.act:focus-visible,button.ghost:focus-visible{outline:3px solid var(--blue-line); outline-offset:2px}
+
+  footer{max-width:1200px; margin:0 auto; padding:24px 22px 40px; color:var(--ink-faint);
+    font-size:.8rem; border-top:1px solid var(--line)}
+  footer b{color:var(--ink-soft)}
+
+  @media(prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important; scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<header class="mast">
+  <div class="mast-in">
+    <div class="glyph">∑</div>
+    <div>
+      <h1>Matematika Dasar</h1>
+      <p class="sub">Materi ringkas &amp; latihan yang berganti otomatis setiap percobaan</p>
+    </div>
+    <span class="tag">PGSD UPI · Kampus Serang</span>
+  </div>
+</header>
+
+<nav class="menu" aria-label="Daftar topik">
+  <div class="menu-in" id="menu">
+    <button data-t="1"><span class="n">1</span>Logika Matematika</button>
+    <button data-t="2"><span class="n">2</span>Himpunan</button>
+    <button data-t="3"><span class="n">3</span>Persamaan Linier</button>
+    <button data-t="4"><span class="n">4</span>Persamaan Kuadrat</button>
+    <button data-t="5"><span class="n">5</span>Pertidaksamaan Kuadrat</button>
+    <button data-t="6"><span class="n">6</span>Fungsi Kuadrat</button>
+    <button data-t="7"><span class="n">7</span>Titik, Garis, Bidang &amp; Ruang</button>
+  </div>
+</nav>
+
+<main>
+
+<!-- ================= TOPIK 1 : LOGIKA ================= -->
+<section class="topik" id="topik-1">
+  <div class="topik-head">
+    <div class="big">01</div>
+    <div><h2>Logika Matematika</h2>
+    <p class="lead">Pernyataan, tabel kebenaran, ekuivalensi, dan penarikan kesimpulan.</p></div>
+  </div>
+  <div class="grid">
+    <div>
+      <div class="card">
+        <p class="eyebrow">Materi</p>
+        <h3>Pernyataan &amp; operasi logika</h3>
+        <p><b>Pernyataan</b> (proposisi) adalah kalimat yang bernilai <b>benar (B)</b> atau <b>salah (S)</b>, tidak keduanya. Kalimat yang memuat variabel disebut <b>kalimat terbuka</b> dan belum punya nilai kebenaran.</p>
+        <p>Lima operasi dasar:</p>
+        <ul>
+          <li><b>Negasi</b> <span class="kbd">¬p</span> — kebalikan nilai <span class="kbd">p</span>.</li>
+          <li><b>Konjungsi</b> <span class="kbd">p ∧ q</span> ("dan") — benar hanya jika keduanya benar.</li>
+          <li><b>Disjungsi</b> <span class="kbd">p ∨ q</span> ("atau") — salah hanya jika keduanya salah.</li>
+          <li><b>Implikasi</b> <span class="kbd">p → q</span> ("jika p maka q") — salah hanya jika p benar &amp; q salah.</li>
+          <li><b>Biimplikasi</b> <span class="kbd">p ↔ q</span> ("p jika dan hanya jika q") — benar jika kedua nilai sama.</li>
+        </ul>
+        <h4>Tabel kebenaran lengkap</h4>
+        <table class="tbl">
+          <thead><tr><th>p</th><th>q</th><th>¬p</th><th>p∧q</th><th>p∨q</th><th>p→q</th><th>p↔q</th></tr></thead>
+          <tbody>
+            <tr><td class="t">B</td><td class="t">B</td><td class="f">S</td><td class="t">B</td><td class="t">B</td><td class="t">B</td><td class="t">B</td></tr>
+            <tr><td class="t">B</td><td class="f">S</td><td class="f">S</td><td class="f">S</td><td class="t">B</td><td class="f">S</td><td class="f">S</td></tr>
+            <tr><td class="f">S</td><td class="t">B</td><td class="t">B</td><td class="f">S</td><td class="t">B</td><td class="t">B</td><td class="f">S</td></tr>
+            <tr><td class="f">S</td><td class="f">S</td><td class="t">B</td><td class="f">S</td><td class="f">S</td><td class="t">B</td><td class="t">B</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <h3>Konvers, invers, kontraposisi</h3>
+        <p>Dari implikasi <span class="kbd">p → q</span>:</p>
+        <div class="rumus"><b>Konvers:</b> q → p &nbsp;·&nbsp; <b>Invers:</b> ¬p → ¬q &nbsp;·&nbsp; <b>Kontraposisi:</b> ¬q → ¬p</div>
+        <p class="muted">Kontraposisi <b>ekuivalen</b> dengan pernyataan asal. Konvers ekuivalen dengan invers.</p>
+        <h4>Hukum penting</h4>
+        <div class="rumus">De Morgan: ¬(p ∧ q) ≡ ¬p ∨ ¬q &nbsp;|&nbsp; ¬(p ∨ q) ≡ ¬p ∧ ¬q<br>Negasi implikasi: ¬(p → q) ≡ p ∧ ¬q</div>
+        <p><b>Tautologi</b> = selalu benar; <b>Kontradiksi</b> = selalu salah. Dua pernyataan <b>ekuivalen</b> (≡) bila tabel kebenarannya sama.</p>
+        <h4>Penarikan kesimpulan (argumen valid)</h4>
+        <div class="rumus">Modus Ponens: p→q , p &nbsp;∴ q<br>Modus Tollens: p→q , ¬q &nbsp;∴ ¬p<br>Silogisme: p→q , q→r &nbsp;∴ p→r</div>
+      </div>
+    </div>
+    <div>
+      <div class="card latihan">
+        <div class="lat-head"><h3>Latihan</h3><span class="skor" id="skor-1">Skor 0/0</span></div>
+        <div class="soal" id="soal-1"></div>
+        <div class="opsi-wrap" id="opsi-1"></div>
+        <div class="fb" id="fb-1"></div>
+        <div class="bahas" id="bahas-1"></div>
+        <div class="lat-btns">
+          <button class="act" onclick="soalBaru(1)">Soal baru</button>
+          <button class="ghost" onclick="resetSkor(1)">Atur ulang skor</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TOPIK 2 : HIMPUNAN ================= -->
+<section class="topik" id="topik-2">
+  <div class="topik-head">
+    <div class="big">02</div>
+    <div><h2>Himpunan</h2>
+    <p class="lead">Notasi, operasi himpunan, serta kardinalitas 2 dan 3 himpunan.</p></div>
+  </div>
+  <div class="grid">
+    <div>
+      <div class="card">
+        <p class="eyebrow">Materi</p>
+        <h3>Konsep &amp; notasi</h3>
+        <p><b>Himpunan</b> adalah kumpulan objek yang terdefinisi jelas. Penulisan: <b>mendaftar</b> <span class="kbd">{1, 2, 3}</span> atau <b>notasi pembentuk</b> <span class="kbd">{x | sifat x}</span>.</p>
+        <ul>
+          <li>Keanggotaan: <span class="kbd">a ∈ A</span> , <span class="kbd">b ∉ A</span></li>
+          <li>Himpunan kosong <span class="kbd">∅ = { }</span> , himpunan semesta <span class="kbd">S</span></li>
+          <li><span class="kbd">A ⊆ B</span> bila setiap anggota A juga anggota B</li>
+        </ul>
+        <h4>Operasi himpunan</h4>
+        <div class="rumus">
+          Gabungan &nbsp;A ∪ B = {x | x∈A <b>atau</b> x∈B}<br>
+          Irisan &nbsp;&nbsp;&nbsp;&nbsp;A ∩ B = {x | x∈A <b>dan</b> x∈B}<br>
+          Komplemen &nbsp;A&prime; = {x∈S | x∉A}<br>
+          Selisih &nbsp;&nbsp;&nbsp;A − B = {x | x∈A dan x∉B}
+        </div>
+        <svg class="venn" viewBox="0 0 300 170" role="img" aria-label="Diagram Venn dua himpunan">
+          <circle cx="118" cy="85" r="62" fill="rgba(43,74,203,.16)" stroke="#2B4ACB" stroke-width="1.5"/>
+          <circle cx="182" cy="85" r="62" fill="rgba(214,68,60,.14)" stroke="#D6443C" stroke-width="1.5"/>
+          <text x="80" y="90" font-family="Georgia" font-size="20" fill="#1E37A8">A</text>
+          <text x="208" y="90" font-family="Georgia" font-size="20" fill="#D6443C">B</text>
+          <text x="150" y="90" font-family="monospace" font-size="11" fill="#16202E" text-anchor="middle">A∩B</text>
+        </svg>
+      </div>
+      <div class="card">
+        <h3>Kardinalitas &amp; inklusi–eksklusi</h3>
+        <p><span class="kbd">n(A)</span> = banyak anggota A. Untuk menghitung gabungan:</p>
+        <div class="rumus"><b>2 himpunan:</b><br>n(A ∪ B) = n(A) + n(B) − n(A ∩ B)</div>
+        <div class="rumus"><b>3 himpunan:</b><br>n(A∪B∪C) = n(A)+n(B)+n(C)<br>&nbsp;&nbsp;− n(A∩B) − n(A∩C) − n(B∩C)<br>&nbsp;&nbsp;+ n(A∩B∩C)</div>
+        <svg class="venn" viewBox="0 0 300 210" role="img" aria-label="Diagram Venn tiga himpunan">
+          <circle cx="150" cy="78" r="58" fill="rgba(43,74,203,.14)" stroke="#2B4ACB" stroke-width="1.5"/>
+          <circle cx="116" cy="138" r="58" fill="rgba(214,68,60,.12)" stroke="#D6443C" stroke-width="1.5"/>
+          <circle cx="184" cy="138" r="58" fill="rgba(30,138,87,.12)" stroke="#1E8A57" stroke-width="1.5"/>
+          <text x="150" y="40" font-family="Georgia" font-size="18" fill="#1E37A8" text-anchor="middle">A</text>
+          <text x="74" y="165" font-family="Georgia" font-size="18" fill="#D6443C">B</text>
+          <text x="218" y="165" font-family="Georgia" font-size="18" fill="#1E8A57">C</text>
+        </svg>
+        <div class="note">Sifat: komutatif, asosiatif, distributif <span class="kbd">A∩(B∪C) = (A∩B)∪(A∩C)</span>, dan De Morgan <span class="kbd">(A∪B)&prime; = A&prime;∩B&prime;</span>.</div>
+      </div>
+    </div>
+    <div>
+      <div class="card latihan">
+        <div class="lat-head"><h3>Latihan</h3><span class="skor" id="skor-2">Skor 0/0</span></div>
+        <div class="soal" id="soal-2"></div>
+        <div class="opsi-wrap" id="opsi-2"></div>
+        <div class="fb" id="fb-2"></div>
+        <div class="bahas" id="bahas-2"></div>
+        <div class="lat-btns">
+          <button class="act" onclick="soalBaru(2)">Soal baru</button>
+          <button class="ghost" onclick="resetSkor(2)">Atur ulang skor</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TOPIK 3 : PERSAMAAN LINIER ================= -->
+<section class="topik" id="topik-3">
+  <div class="topik-head">
+    <div class="big">03</div>
+    <div><h2>Persamaan Linier</h2>
+    <p class="lead">Persamaan linear satu &amp; dua variabel, metode penyelesaian, dan penerapannya.</p></div>
+  </div>
+  <div class="grid">
+    <div>
+      <div class="card">
+        <p class="eyebrow">Materi</p>
+        <h3>Persamaan linear satu variabel (PLSV)</h3>
+        <div class="rumus">a·x + b = c , &nbsp;a ≠ 0 &nbsp;⇒&nbsp; x = <span class="frac"><span>c − b</span><span>a</span></span></div>
+        <p><b>Prinsip kesetaraan:</b> melakukan operasi yang sama (tambah, kurang, kali, bagi) pada kedua ruas tidak mengubah penyelesaian.</p>
+        <h4>Persamaan linear dua variabel (PLDV) &amp; SPLDV</h4>
+        <p><span class="kbd">ax + by = c</span> punya tak hingga penyelesaian (berupa garis). <b>Sistem (SPLDV)</b> = dua PLDV; penyelesaiannya titik potong kedua garis.</p>
+        <p>Metode: <b>substitusi</b>, <b>eliminasi</b>, <b>gabungan</b>, dan <b>grafik</b>.</p>
+      </div>
+      <div class="card">
+        <h3>Penerapan (aplikasi)</h3>
+        <p>Langkah pemodelan: tentukan variabel → susun persamaan dari kalimat → selesaikan → tafsirkan jawaban.</p>
+        <div class="note"><b>Contoh.</b> "Harga 2 buku dan 3 pena Rp 13.000; 1 buku dan 2 pena Rp 8.000." Misal buku = x, pena = y, maka <span class="kbd">2x + 3y = 13000</span> dan <span class="kbd">x + 2y = 8000</span> → diselesaikan dengan eliminasi/substitusi.</div>
+        <p class="muted">Tema umum: harga &amp; pembelian, umur, kecepatan-jarak-waktu, serta bilangan.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card latihan">
+        <div class="lat-head"><h3>Latihan</h3><span class="skor" id="skor-3">Skor 0/0</span></div>
+        <div class="soal" id="soal-3"></div>
+        <div class="opsi-wrap" id="opsi-3"></div>
+        <div class="fb" id="fb-3"></div>
+        <div class="bahas" id="bahas-3"></div>
+        <div class="lat-btns">
+          <button class="act" onclick="soalBaru(3)">Soal baru</button>
+          <button class="ghost" onclick="resetSkor(3)">Atur ulang skor</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TOPIK 4 : PERSAMAAN KUADRAT ================= -->
+<section class="topik" id="topik-4">
+  <div class="topik-head">
+    <div class="big">04</div>
+    <div><h2>Persamaan Kuadrat</h2>
+    <p class="lead">Akar, diskriminan, serta jumlah dan hasil kali akar.</p></div>
+  </div>
+  <div class="grid">
+    <div>
+      <div class="card">
+        <p class="eyebrow">Materi</p>
+        <h3>Bentuk &amp; cara penyelesaian</h3>
+        <div class="rumus">a·x<sup>2</sup> + b·x + c = 0 , &nbsp;a ≠ 0</div>
+        <p>Tiga cara mencari akar:</p>
+        <ul>
+          <li><b>Pemfaktoran</b></li>
+          <li><b>Melengkapkan kuadrat sempurna</b></li>
+          <li><b>Rumus abc:</b></li>
+        </ul>
+        <div class="rumus">x<sub>1,2</sub> = <span class="frac"><span>−b ± √(b<sup>2</sup> − 4ac)</span><span>2a</span></span></div>
+      </div>
+      <div class="card">
+        <h3>Diskriminan</h3>
+        <div class="rumus"><b>D = b<sup>2</sup> − 4ac</b></div>
+        <table class="tbl">
+          <thead><tr><th>Nilai D</th><th>Jenis akar</th></tr></thead>
+          <tbody>
+            <tr><td class="op">D &gt; 0</td><td>dua akar real berbeda</td></tr>
+            <tr><td class="op">D = 0</td><td>dua akar real kembar (sama)</td></tr>
+            <tr><td class="op">D &lt; 0</td><td>tidak punya akar real</td></tr>
+          </tbody>
+        </table>
+        <h4>Jumlah &amp; hasil kali akar</h4>
+        <div class="rumus">x<sub>1</sub> + x<sub>2</sub> = −<span class="frac"><span>b</span><span>a</span></span> &nbsp;&nbsp;·&nbsp;&nbsp; x<sub>1</sub> · x<sub>2</sub> = <span class="frac"><span>c</span><span>a</span></span></div>
+        <p>Menyusun persamaan baru dari akar:</p>
+        <div class="rumus">x<sup>2</sup> − (x<sub>1</sub> + x<sub>2</sub>)·x + (x<sub>1</sub>·x<sub>2</sub>) = 0</div>
+      </div>
+    </div>
+    <div>
+      <div class="card latihan">
+        <div class="lat-head"><h3>Latihan</h3><span class="skor" id="skor-4">Skor 0/0</span></div>
+        <div class="soal" id="soal-4"></div>
+        <div class="opsi-wrap" id="opsi-4"></div>
+        <div class="fb" id="fb-4"></div>
+        <div class="bahas" id="bahas-4"></div>
+        <div class="lat-btns">
+          <button class="act" onclick="soalBaru(4)">Soal baru</button>
+          <button class="ghost" onclick="resetSkor(4)">Atur ulang skor</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TOPIK 5 : PERTIDAKSAMAAN KUADRAT ================= -->
+<section class="topik" id="topik-5">
+  <div class="topik-head">
+    <div class="big">05</div>
+    <div><h2>Pertidaksamaan Kuadrat</h2>
+    <p class="lead">Garis bilangan, uji tanda, dan himpunan penyelesaian.</p></div>
+  </div>
+  <div class="grid">
+    <div>
+      <div class="card">
+        <p class="eyebrow">Materi</p>
+        <h3>Bentuk &amp; langkah</h3>
+        <div class="rumus">a·x<sup>2</sup> + b·x + c &nbsp; { &lt; , ≤ , &gt; , ≥ } &nbsp; 0</div>
+        <ol>
+          <li>Nolkan satu ruas.</li>
+          <li>Cari <b>pembuat nol</b> (akar) dari <span class="kbd">ax²+bx+c = 0</span>.</li>
+          <li>Gambar <b>garis bilangan</b> &amp; uji tanda tiap interval (atau pakai arah buka parabola).</li>
+          <li>Tulis <b>himpunan penyelesaian</b> sesuai tanda yang diminta.</li>
+        </ol>
+        <h4>Pola untuk a &gt; 0, akar x<sub>1</sub> &lt; x<sub>2</sub></h4>
+        <div class="rumus">
+          ax²+bx+c &lt; 0 &nbsp;⇒&nbsp; x<sub>1</sub> &lt; x &lt; x<sub>2</sub> &nbsp;(di dalam)<br>
+          ax²+bx+c &gt; 0 &nbsp;⇒&nbsp; x &lt; x<sub>1</sub> atau x &gt; x<sub>2</sub> &nbsp;(di luar)
+        </div>
+        <div class="note">Tanda <b>≤ / ≥</b> menyertakan titik ujung (pakai tanda sama dengan). Jika <b>a &lt; 0</b>, arah pertidaksamaan dibalik.</div>
+      </div>
+    </div>
+    <div>
+      <div class="card latihan">
+        <div class="lat-head"><h3>Latihan</h3><span class="skor" id="skor-5">Skor 0/0</span></div>
+        <div class="soal" id="soal-5"></div>
+        <div class="opsi-wrap" id="opsi-5"></div>
+        <div class="fb" id="fb-5"></div>
+        <div class="bahas" id="bahas-5"></div>
+        <div class="lat-btns">
+          <button class="act" onclick="soalBaru(5)">Soal baru</button>
+          <button class="ghost" onclick="resetSkor(5)">Atur ulang skor</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TOPIK 6 : FUNGSI KUADRAT ================= -->
+<section class="topik" id="topik-6">
+  <div class="topik-head">
+    <div class="big">06</div>
+    <div><h2>Fungsi Kuadrat</h2>
+    <p class="lead">Grafik parabola, titik puncak, sumbu simetri, dan nilai ekstrem.</p></div>
+  </div>
+  <div class="grid">
+    <div>
+      <div class="card">
+        <p class="eyebrow">Materi</p>
+        <h3>Bentuk &amp; grafik</h3>
+        <div class="rumus">f(x) = a·x<sup>2</sup> + b·x + c</div>
+        <ul>
+          <li><b>a &gt; 0</b> → parabola terbuka ke atas (punya nilai <b>minimum</b>).</li>
+          <li><b>a &lt; 0</b> → terbuka ke bawah (punya nilai <b>maksimum</b>).</li>
+        </ul>
+        <h4>Unsur penting</h4>
+        <div class="rumus">
+          Sumbu simetri: &nbsp;x = −<span class="frac"><span>b</span><span>2a</span></span><br>
+          Titik puncak: &nbsp;( −<span class="frac"><span>b</span><span>2a</span></span> , −<span class="frac"><span>D</span><span>4a</span></span> ) , &nbsp;D = b²−4ac<br>
+          Potong sumbu-Y: (0, c) &nbsp;·&nbsp; Potong sumbu-X: akar ax²+bx+c=0
+        </div>
+        <svg class="sketch" viewBox="0 0 300 210" role="img" aria-label="Sketsa parabola">
+          <line x1="22" y1="150" x2="280" y2="150" stroke="#C9D2F6" stroke-width="1.5"/>
+          <line x1="150" y1="22" x2="150" y2="190" stroke="#C9D2F6" stroke-width="1.5"/>
+          <line x1="150" y1="22" x2="150" y2="190" stroke="#D6443C" stroke-width="1" stroke-dasharray="4 4"/>
+          <path d="M 92 42 Q 150 280 208 42" fill="none" stroke="#2B4ACB" stroke-width="2.5"/>
+          <circle cx="150" cy="160" r="4.5" fill="#1E37A8"/>
+          <text x="158" y="178" font-family="monospace" font-size="10" fill="#16202E">(−b/2a , −D/4a)</text>
+          <text x="158" y="36" font-family="monospace" font-size="10" fill="#D6443C">sumbu simetri</text>
+        </svg>
+        <p>Menyusun fungsi dari titik puncak (x<sub>p</sub>, y<sub>p</sub>): &nbsp;<span class="kbd">f(x) = a(x − xₚ)² + yₚ</span>.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card latihan">
+        <div class="lat-head"><h3>Latihan</h3><span class="skor" id="skor-6">Skor 0/0</span></div>
+        <div class="soal" id="soal-6"></div>
+        <div class="opsi-wrap" id="opsi-6"></div>
+        <div class="fb" id="fb-6"></div>
+        <div class="bahas" id="bahas-6"></div>
+        <div class="lat-btns">
+          <button class="act" onclick="soalBaru(6)">Soal baru</button>
+          <button class="ghost" onclick="resetSkor(6)">Atur ulang skor</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TOPIK 7 : TITIK GARIS BIDANG RUANG ================= -->
+<section class="topik" id="topik-7">
+  <div class="topik-head">
+    <div class="big">07</div>
+    <div><h2>Titik, Garis, Bidang &amp; Ruang</h2>
+    <p class="lead">Unsur geometri, kedudukan, dan geometri koordinat bidang.</p></div>
+  </div>
+  <div class="grid">
+    <div>
+      <div class="card">
+        <p class="eyebrow">Materi</p>
+        <h3>Unsur dasar (tak terdefinisi)</h3>
+        <table class="tbl">
+          <thead><tr><th>Unsur</th><th>Dimensi</th><th>Keterangan</th></tr></thead>
+          <tbody>
+            <tr><td>Titik</td><td class="op">0</td><td>dilambangkan huruf kapital A, B, …</td></tr>
+            <tr><td>Garis</td><td class="op">1</td><td>himpunan titik, memanjang tak terbatas</td></tr>
+            <tr><td>Bidang</td><td class="op">2</td><td>permukaan datar tak terbatas</td></tr>
+            <tr><td>Ruang</td><td class="op">3</td><td>himpunan semua titik</td></tr>
+          </tbody>
+        </table>
+        <h4>Kedudukan</h4>
+        <ul>
+          <li><b>Dua garis:</b> berpotongan · sejajar (sebidang, tak berpotongan) · berimpit · <b>bersilangan</b> (tidak sebidang — hanya di ruang).</li>
+          <li><b>Garis &amp; bidang:</b> terletak pada bidang · sejajar · menembus (memotong).</li>
+          <li><b>Dua bidang:</b> berimpit · sejajar · berpotongan (membentuk sebuah garis).</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Geometri koordinat (bidang)</h3>
+        <p>Untuk titik <span class="kbd">A(x₁, y₁)</span> dan <span class="kbd">B(x₂, y₂)</span>:</p>
+        <div class="rumus">
+          Jarak: &nbsp;d = √( (x₂−x₁)² + (y₂−y₁)² )<br>
+          Titik tengah: &nbsp;M = ( <span class="frac"><span>x₁+x₂</span><span>2</span></span> , <span class="frac"><span>y₁+y₂</span><span>2</span></span> )<br>
+          Gradien: &nbsp;m = <span class="frac"><span>y₂ − y₁</span><span>x₂ − x₁</span></span>
+        </div>
+        <div class="note">Pengayaan — jarak titik (x₀,y₀) ke garis <span class="kbd">ax+by+c=0</span>: &nbsp;<span class="kbd">|ax₀+by₀+c| / √(a²+b²)</span>.</div>
+      </div>
+    </div>
+    <div>
+      <div class="card latihan">
+        <div class="lat-head"><h3>Latihan</h3><span class="skor" id="skor-7">Skor 0/0</span></div>
+        <div class="soal" id="soal-7"></div>
+        <div class="opsi-wrap" id="opsi-7"></div>
+        <div class="fb" id="fb-7"></div>
+        <div class="bahas" id="bahas-7"></div>
+        <div class="lat-btns">
+          <button class="act" onclick="soalBaru(7)">Soal baru</button>
+          <button class="ghost" onclick="resetSkor(7)">Atur ulang skor</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <p><b>Matematika Dasar — PGSD UPI Kampus Serang.</b> Aplikasi satu berkas (single-file), tanpa koneksi internet, dan bebas dipakai. Setiap kali menekan <b>Soal baru</b>, soal dibangkitkan ulang secara acak sehingga latihan tidak pernah sama.</p>
+</footer>
+
+<script>
+/* ===================== Utilitas ===================== */
+function randInt(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)];}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+
+/* susun pilihan ganda: jawaban benar + pengecoh -> {choices, correct} */
+function mc(correct, distractors){
+  const opts=[correct];
+  for(const d of distractors){ if(opts.length>=4) break; if(!opts.includes(d)) opts.push(d); }
+  let pad=1;
+  while(opts.length<4){ const f=correct+' '.repeat(pad); if(!opts.includes(f)) opts.push(f); pad++; }
+  const sh=shuffle(opts);
+  return {choices:sh, correct:sh.indexOf(correct)};
+}
+/* format polinomial / linear */
+function quad(a,b,c){
+  let s = a===1?'x²' : a===-1?'−x²' : a+'x²';
+  if(b!==0){ s += (b>0?' + ':' − ') + (Math.abs(b)===1?'':Math.abs(b)) + 'x'; }
+  if(c!==0){ s += (c>0?' + ':' − ') + Math.abs(c); }
+  return s;
+}
+function lin(a,b){
+  let s = a===1?'x' : a===-1?'−x' : a+'x';
+  if(b!==0){ s += (b>0?' + ':' − ') + Math.abs(b); }
+  return s;
+}
+function lin2(a,b,c){ // ax + by = c   (b diasumsikan ≠ 0)
+  let s = a===1?'x' : a===-1?'−x' : a+'x';
+  s += (b>0?' + ':' − ') + (Math.abs(b)===1?'y':Math.abs(b)+'y');
+  return s + ' = ' + c;
+}
+function E(t){return '<span class="expr">'+t+'</span>';} // expr untuk pembahasan
+
+/* ===================== Bank teks logika ===================== */
+const KLAUSA=[
+ {a:"hari ini hujan",na:"hari ini tidak hujan"},
+ {a:"Budi rajin belajar",na:"Budi tidak rajin belajar"},
+ {a:"Ani lulus ujian",na:"Ani tidak lulus ujian"},
+ {a:"cuaca cerah",na:"cuaca tidak cerah"},
+ {a:"ia datang tepat waktu",na:"ia tidak datang tepat waktu"},
+ {a:"harga BBM naik",na:"harga BBM tidak naik"}
+];
+const IMPL=[
+ {p:"Budi belajar",np:"Budi tidak belajar",q:"Budi lulus",nq:"Budi tidak lulus",r:"Budi bahagia",nr:"Budi tidak bahagia"},
+ {p:"hari hujan",np:"hari tidak hujan",q:"jalan basah",nq:"jalan tidak basah",r:"sepatu kotor",nr:"sepatu tidak kotor"},
+ {p:"ia rajin",np:"ia tidak rajin",q:"ia pandai",nq:"ia tidak pandai",r:"ia berprestasi",nr:"ia tidak berprestasi"},
+ {p:"listrik padam",np:"listrik tidak padam",q:"lampu mati",nq:"lampu tidak mati",r:"ruangan gelap",nr:"ruangan tidak gelap"}
+];
+
+/* ===================== GENERATOR — Logika ===================== */
+function g_logTabel(){
+  const P=Math.random()<.5, Q=Math.random()<.5;
+  const and=P&&Q, or=P||Q, imp=(!P)||Q, iff=P===Q;
+  const tup=a=>'( '+a.map(x=>x?'B':'S').join(' , ')+' )';
+  const corr=tup([and,or,imp,iff]);
+  const ds=new Set(); let guard=0;
+  while(ds.size<3 && guard++<60){
+    const cp=[and,or,imp,iff]; const k=randInt(1,3);
+    shuffle([0,1,2,3]).slice(0,k).forEach(i=>cp[i]=!cp[i]);
+    const s=tup(cp); if(s!==corr) ds.add(s);
+  }
+  const o=mc(corr,[...ds]);
+  return {q:`Diketahui p bernilai <b>${P?'benar':'salah'}</b> dan q bernilai <b>${Q?'benar':'salah'}</b>. Nilai kebenaran dari ${E('( p∧q , p∨q , p→q , p↔q )')} berturut-turut adalah …`,
+    choices:o.choices, correct:o.correct,
+    sol:`Dengan p=${P?'B':'S'}, q=${Q?'B':'S'}: konjungsi ${and?'B':'S'}, disjungsi ${or?'B':'S'}, implikasi ${imp?'B':'S'} (salah hanya bila p benar & q salah), biimplikasi ${iff?'B':'S'} (benar bila nilai sama). Jadi ${E(corr)}.`};
+}
+function g_logKontra(){
+  const k=pick(IMPL);
+  const forms={
+    kontraposisi:`Jika ${k.nq}, maka ${k.np}.`,
+    konvers:`Jika ${k.q}, maka ${k.p}.`,
+    invers:`Jika ${k.np}, maka ${k.nq}.`
+  };
+  const target=pick(["kontraposisi","konvers","invers"]);
+  const others=Object.keys(forms).filter(x=>x!==target).map(x=>forms[x]);
+  const extra=`Jika ${k.q}, maka ${k.np}.`;
+  const o=mc(forms[target],[...others,extra]);
+  const def={kontraposisi:"¬q → ¬p",konvers:"q → p",invers:"¬p → ¬q"};
+  return {q:`Diberikan implikasi: <b>“Jika ${k.p}, maka ${k.q}.”</b> &nbsp;<b>${cap(target)}</b> dari pernyataan tersebut adalah …`,
+    choices:o.choices, correct:o.correct,
+    sol:`Pernyataan asal p→q dengan p = “${k.p}”, q = “${k.q}”. ${cap(target)} berbentuk ${E(def[target])}, yaitu “${forms[target]}”.`};
+}
+function g_logTarik(){
+  const k=pick(IMPL);
+  const form=pick(["MP","MT","SIL"]);
+  let premis, concl, distr;
+  if(form==="MP"){
+    premis=[`Jika ${k.p}, maka ${k.q}.`, cap(k.p)+'.'];
+    concl=cap(k.q)+'.';
+    distr=[cap(k.np)+'.', `Jika ${k.q}, maka ${k.p}.`, cap(k.nq)+'.'];
+  }else if(form==="MT"){
+    premis=[`Jika ${k.p}, maka ${k.q}.`, cap(k.nq)+'.'];
+    concl=cap(k.np)+'.';
+    distr=[cap(k.p)+'.', cap(k.q)+'.', `Jika ${k.nq}, maka ${k.np}.`];
+  }else{
+    premis=[`Jika ${k.p}, maka ${k.q}.`, `Jika ${k.q}, maka ${k.r}.`];
+    concl=`Jika ${k.p}, maka ${k.r}.`;
+    distr=[`Jika ${k.r}, maka ${k.p}.`, `Jika ${k.q}, maka ${k.p}.`, cap(k.r)+'.'];
+  }
+  const o=mc(concl,distr);
+  const nama={MP:"Modus Ponens (p→q, p ∴ q)",MT:"Modus Tollens (p→q, ¬q ∴ ¬p)",SIL:"Silogisme (p→q, q→r ∴ p→r)"};
+  return {q:`Perhatikan premis berikut.<br>P1: <b>${premis[0]}</b><br>P2: <b>${premis[1]}</b><br>Kesimpulan yang sah adalah …`,
+    choices:o.choices, correct:o.correct,
+    sol:`Ini pola <b>${nama[form]}</b>. Maka kesimpulan yang sah: “${concl}”.`};
+}
+function g_logNegasi(){
+  const a=pick(KLAUSA); let b=pick(KLAUSA); while(b.a===a.a) b=pick(KLAUSA);
+  const isAnd=Math.random()<.5;
+  const asal=`${cap(a.a)} ${isAnd?'dan':'atau'} ${b.a}.`;
+  const benar=isAnd ? `${cap(a.na)} atau ${b.na}.` : `${cap(a.na)} dan ${b.na}.`;
+  const distr=[
+    isAnd ? `${cap(a.na)} dan ${b.na}.` : `${cap(a.na)} atau ${b.na}.`,
+    `${cap(a.a)} dan ${b.na}.`,
+    `${cap(a.na)} ${isAnd?'dan':'atau'} ${b.a}.`
+  ];
+  const o=mc(benar,distr);
+  return {q:`Negasi dari pernyataan <b>“${asal}”</b> adalah …`,
+    choices:o.choices, correct:o.correct,
+    sol:`Gunakan De Morgan: ¬(p ${isAnd?'∧':'∨'} q) ≡ ¬p ${isAnd?'∨':'∧'} ¬q. Negasi “dan” menjadi “atau”, dan tiap bagian dinegasikan. Hasil: “${benar}”.`};
+}
+
+/* ===================== GENERATOR — Himpunan ===================== */
+function g_himIE2(){
+  const nAB=randInt(2,8), nA=nAB+randInt(2,9), nB=nAB+randInt(2,9);
+  const ans=nA+nB-nAB;
+  const o=mc(String(ans),[String(nA+nB),String(nA+nB+nAB),String(Math.abs(nA-nB)+nAB),String(ans-nAB)]);
+  return {q:`Diketahui ${E('n(A)='+nA)}, ${E('n(B)='+nB)}, dan ${E('n(A∩B)='+nAB)}. Nilai ${E('n(A∪B)')} adalah …`,
+    choices:o.choices, correct:o.correct,
+    sol:`n(A∪B) = n(A)+n(B)−n(A∩B) = ${nA}+${nB}−${nAB} = <b>${ans}</b>.`};
+}
+function g_himWord(){
+  const both=randInt(3,9), onlyA=randInt(4,12), onlyB=randInt(4,12), none=randInt(2,8);
+  const A=onlyA+both, B=onlyB+both, total=onlyA+onlyB+both+none;
+  const ans=none;
+  const o=mc(String(ans),[String(total-A-B),String(total-(A+B-both)+1),String(both),String(A+B-both)]);
+  return {q:`Dari <b>${total}</b> siswa, <b>${A}</b> siswa suka Matematika, <b>${B}</b> siswa suka IPA, dan <b>${both}</b> siswa suka keduanya. Banyak siswa yang <b>tidak suka keduanya</b> adalah …`,
+    choices:o.choices, correct:o.correct,
+    sol:`Suka minimal satu = n(M∪I) = ${A}+${B}−${both} = ${A+B-both}. Tidak suka keduanya = ${total} − ${A+B-both} = <b>${ans}</b>.`};
+}
+function g_himIE3(){
+  const nA=randInt(15,30),nB=randInt(15,30),nC=randInt(15,30);
+  const nAB=randInt(4,9),nAC=randInt(4,9),nBC=randInt(4,9),nABC=randInt(1,4);
+  const ans=nA+nB+nC-nAB-nAC-nBC+nABC;
+  const o=mc(String(ans),[String(nA+nB+nC-nAB-nAC-nBC-nABC),String(nA+nB+nC),String(nA+nB+nC-nAB-nAC-nBC),String(ans+2*nABC)]);
+  return {q:`Diketahui ${E('n(A)='+nA)}, ${E('n(B)='+nB)}, ${E('n(C)='+nC)}, ${E('n(A∩B)='+nAB)}, ${E('n(A∩C)='+nAC)}, ${E('n(B∩C)='+nBC)}, ${E('n(A∩B∩C)='+nABC)}. Nilai ${E('n(A∪B∪C)')} adalah …`,
+    choices:o.choices, correct:o.correct,
+    sol:`n(A∪B∪C) = ${nA}+${nB}+${nC} − ${nAB} − ${nAC} − ${nBC} + ${nABC} = <b>${ans}</b>.`};
+}
+function g_himOps(){
+  const univ=[1,2,3,4,5,6,7,8,9];
+  const A=shuffle(univ).slice(0,randInt(4,5)).sort((x,y)=>x-y);
+  const B=shuffle(univ).slice(0,randInt(4,5)).sort((x,y)=>x-y);
+  const ops=[
+    {n:"A ∩ B", f:A.filter(x=>B.includes(x))},
+    {n:"A ∪ B", f:[...new Set([...A,...B])].sort((x,y)=>x-y)},
+    {n:"A − B", f:A.filter(x=>!B.includes(x))}
+  ];
+  const op=pick(ops);
+  const set=arr=>'{ '+(arr.length?arr.join(', '):' ')+' }';
+  const correct=set(op.f);
+  const wrong=ops.filter(o=>o.n!==op.n).map(o=>set(o.f));
+  wrong.push(set([...new Set([...A,...B])].filter(x=>!(A.includes(x)&&B.includes(x))).sort((a,b)=>a-b)));
+  const o=mc(correct,wrong);
+  return {q:`Diketahui ${E('A = '+set(A))} dan ${E('B = '+set(B))}. Hasil ${E(op.n)} adalah …`,
+    choices:o.choices, correct:o.correct,
+    sol:`${op.n} = ${E(correct)} (${op.n.includes('∩')?'anggota yang ada di A sekaligus di B':op.n.includes('∪')?'gabungan semua anggota A dan B':'anggota A yang tidak ada di B'}).`};
+}
+
+/* ===================== GENERATOR — Persamaan Linier ===================== */
+function g_plsv(){
+  const a=randInt(2,7), x=randInt(-6,9), b=randInt(-9,9), c=a*x+b;
+  const o=mc(String(x),[String(x+1),String(x-1),String(c-b),String(-x)]);
+  return {q:`Tentukan nilai x dari persamaan ${E(lin(a,b)+' = '+c)}.`,
+    choices:o.choices, correct:o.correct,
+    sol:`${lin(a,b)} = ${c} ⇒ ${a}x = ${c}${b>=0?' − '+b:' + '+(-b)} = ${c-b} ⇒ x = (${c-b})/${a} = <b>${x}</b>.`};
+}
+function g_plsv2(){
+  let a=randInt(3,8), c=randInt(2,7); while(a===c) c=randInt(2,7);
+  const x=randInt(-5,8), b=randInt(-8,8), d=(a-c)*x+b;
+  const o=mc(String(x),[String(x+1),String(x-2),String(-x),String(b-d)]);
+  return {q:`Tentukan nilai x dari persamaan ${E(lin(a,b)+' = '+lin(c,d))}.`,
+    choices:o.choices, correct:o.correct,
+    sol:`Kumpulkan x di kiri: (${a}−${c})x = ${d} − (${b}) ⇒ ${a-c}x = ${d-b} ⇒ x = <b>${x}</b>.`};
+}
+function g_spldv(){
+  const x=randInt(-4,6), y=randInt(-4,6);
+  let a1,b1,a2,b2;
+  do{ a1=randInt(1,4); b1=randInt(-3,4)||1; a2=randInt(1,4); b2=randInt(-3,4)||1; }
+  while(a1*b2-a2*b1===0 || (a1===a2&&b1===b2));
+  const c1=a1*x+b1*y, c2=a2*x+b2*y;
+  const correct=`x = ${x} , y = ${y}`;
+  const o=mc(correct,[`x = ${y} , y = ${x}`,`x = ${-x} , y = ${y}`,`x = ${x} , y = ${-y}`,`x = ${x+1} , y = ${y-1}`]);
+  return {q:`Tentukan penyelesaian sistem persamaan:<br>${E(lin2(a1,b1,c1))}<br>${E(lin2(a2,b2,c2))}`,
+    choices:o.choices, correct:o.correct,
+    sol:`Dengan eliminasi/substitusi diperoleh <b>x = ${x}</b> dan <b>y = ${y}</b>. Periksa: ${a1}(${x})${b1>=0?'+':'−'}${Math.abs(b1)}(${y}) = ${c1}. ✓`};
+}
+
+/* ===================== GENERATOR — Persamaan Kuadrat ===================== */
+function g_pkFaktor(){
+  let r1=randInt(-7,7), r2=randInt(-7,7); while(r2===r1) r2=randInt(-7,7);
+  const a=Math.random()<.3?2:1;
+  const b=-a*(r1+r2), c=a*r1*r2;
+  const lo=Math.min(r1,r2), hi=Math.max(r1,r2);
+  const correct=`x = ${lo}  atau  x = ${hi}`;
+  const o=mc(correct,[
+    `x = ${-lo}  atau  x = ${-hi}`,
+    `x = ${lo}  atau  x = ${-hi}`,
+    `x = ${-lo}  atau  x = ${hi}`
+  ]);
+  return {q:`Himpunan penyelesaian dari ${E(quad(a,b,c)+' = 0')} adalah …`,
+    choices:o.choices, correct:o.correct,
+    sol:`Faktorkan: ${a===1?'':a+'·'}(x ${-r1>=0?'+ '+(-r1):'− '+r1})(x ${-r2>=0?'+ '+(-r2):'− '+r2}) = 0 ⇒ x = ${lo} atau x = ${hi}.`};
+}
+function g_pkDisk(){
+  const a=randInt(1,3), b=randInt(-7,7), c=randInt(-6,6);
+  const D=b*b-4*a*c;
+  const o=mc(String(D),[String(b*b+4*a*c),String(b*b-2*a*c),String(4*a*c-b*b),String(b*b-4*c)]);
+  return {q:`Nilai diskriminan dari ${E(quad(a,b,c)+' = 0')} adalah …`,
+    choices:o.choices, correct:o.correct,
+    sol:`D = b²−4ac = (${b})² − 4·${a}·(${c}) = ${b*b} − ${4*a*c} = <b>${D}</b>. ${D>0?'Karena D>0 → dua akar real berbeda.':D===0?'Karena D=0 → akar kembar.':'Karena D<0 → tidak ada akar real.'}`};
+}
+function g_pkJumKali(){
+  const b=randInt(-8,8), c=randInt(-8,8); // a = 1
+  const tanya=Math.random()<.5?"jumlah":"hasil kali";
+  const ans=tanya==="jumlah"? -b : c;
+  const o=mc(String(ans),[String(b),String(-c),String(ans+1),String(ans-2)]);
+  return {q:`Jika x₁ dan x₂ akar-akar dari ${E(quad(1,b,c)+' = 0')}, maka <b>${tanya}</b> kedua akarnya adalah …`,
+    choices:o.choices, correct:o.correct,
+    sol:`Untuk a=1: x₁+x₂ = −b = ${-b} dan x₁·x₂ = c = ${c}. ${tanya==="jumlah"?'Jumlah':'Hasil kali'} = <b>${ans}</b>.`};
+}
+
+/* ===================== GENERATOR — Pertidaksamaan Kuadrat ===================== */
+function g_tidaksama(){
+  let r1=randInt(-6,5), r2=randInt(-5,6); while(r2<=r1){r1=randInt(-6,5);r2=randInt(-5,6);}
+  const b=-(r1+r2), c=r1*r2;
+  const sym=pick(['<','≤','>','≥']);
+  const sets={
+    '<':`{ x | ${r1} < x < ${r2} }`,
+    '≤':`{ x | ${r1} ≤ x ≤ ${r2} }`,
+    '>':`{ x | x < ${r1} atau x > ${r2} }`,
+    '≥':`{ x | x ≤ ${r1} atau x ≥ ${r2} }`
+  };
+  const correct=sets[sym];
+  const o=mc(correct,[sets['<'],sets['>'],sets['≤'],sets['≥']].filter(s=>s!==correct));
+  const dalam=(sym==='<'||sym==='≤');
+  return {q:`Himpunan penyelesaian dari ${E(quad(1,b,c)+' '+sym+' 0')} adalah …`,
+    choices:o.choices, correct:o.correct,
+    sol:`Pembuat nol: (x ${-r1>=0?'+ '+(-r1):'− '+r1})(x ${-r2>=0?'+ '+(-r2):'− '+r2}) = 0 ⇒ x = ${r1}, ${r2}. Karena a>0 dan tanda “${sym}”, penyelesaian berada <b>${dalam?'di antara':'di luar'}</b> akar${(sym==='≤'||sym==='≥')?' (titik ujung ikut)':''}: ${E(correct)}.`};
+}
+
+/* ===================== GENERATOR — Fungsi Kuadrat ===================== */
+function buildFungsi(){
+  const a=pick([1,-1,2,-2]);
+  const xp=randInt(-5,5), yp=randInt(-6,6);
+  const b=-2*a*xp, c=yp+a*xp*xp;
+  return {a,b,c,xp,yp};
+}
+function g_fnPuncak(){
+  const f=buildFungsi();
+  const correct=`( ${f.xp} , ${f.yp} )`;
+  const o=mc(correct,[`( ${-f.xp} , ${f.yp} )`,`( ${f.xp} , ${-f.yp} )`,`( ${-f.xp} , ${-f.yp} )`]);
+  return {q:`Titik puncak (titik balik) dari fungsi ${E('f(x) = '+quad(f.a,f.b,f.c))} adalah …`,
+    choices:o.choices, correct:o.correct,
+    sol:`xₚ = −b/2a = −(${f.b})/(2·${f.a}) = ${f.xp}; lalu yₚ = f(${f.xp}) = ${f.yp}. Titik puncak ${E(correct)}.`};
+}
+function g_fnSumbu(){
+  const f=buildFungsi();
+  const correct=`x = ${f.xp}`;
+  const o=mc(correct,[`x = ${-f.xp}`,`x = ${f.b}`,`x = ${-f.b}`]);
+  return {q:`Persamaan sumbu simetri grafik ${E('f(x) = '+quad(f.a,f.b,f.c))} adalah …`,
+    choices:o.choices, correct:o.correct,
+    sol:`Sumbu simetri x = −b/2a = −(${f.b})/(2·${f.a}) = <b>${f.xp}</b>.`};
+}
+function g_fnEkstrem(){
+  const f=buildFungsi();
+  const jenis=f.a>0?'minimum':'maksimum';
+  const correct=String(f.yp);
+  const o=mc(correct,[String(f.yp+2),String(f.yp-3),String(f.xp)]);
+  return {q:`Nilai <b>${jenis}</b> dari fungsi ${E('f(x) = '+quad(f.a,f.b,f.c))} adalah …`,
+    choices:o.choices, correct:o.correct,
+    sol:`Karena a = ${f.a} ${f.a>0?'(> 0 → punya minimum)':'(< 0 → punya maksimum)'}, nilai ekstrem = yₚ = f(${f.xp}) = <b>${f.yp}</b>.`};
+}
+
+/* ===================== GENERATOR — Titik, Garis, Bidang, Ruang ===================== */
+const TRIPEL=[[3,4,5],[6,8,10],[5,12,13],[8,15,17],[9,12,15],[7,24,25],[12,16,20]];
+function g_geoJarak(){
+  let dx,dy,d;
+  if(Math.random()<.3){ d=randInt(3,9); dx=pick([d,-d]); dy=0; if(Math.random()<.5){dy=dx;dx=0;} }
+  else{ const t=pick(TRIPEL); let p=t[0],q=t[1]; if(Math.random()<.5){[p,q]=[q,p];} dx=pick([p,-p]); dy=pick([q,-q]); d=t[2]; }
+  const x1=randInt(-5,5), y1=randInt(-5,5), x2=x1+dx, y2=y1+dy;
+  const o=mc(String(d),[String(d+1),String(Math.abs(dx)+Math.abs(dy)),String(d-2),String(d+3)]);
+  return {q:`Jarak antara titik ${E('A('+x1+', '+y1+')')} dan ${E('B('+x2+', '+y2+')')} adalah …`,
+    choices:o.choices, correct:o.correct,
+    sol:`d = √((${x2}−${x1})² + (${y2}−${y1})²) = √(${dx*dx} + ${dy*dy}) = √${dx*dx+dy*dy} = <b>${d}</b>.`};
+}
+function g_geoTengah(){
+  const mx=randInt(-4,4), my=randInt(-4,4), hx=randInt(1,5), hy=randInt(1,5);
+  const x1=mx-hx,y1=my-hy,x2=mx+hx,y2=my+hy;
+  const correct=`( ${mx} , ${my} )`;
+  const o=mc(correct,[`( ${mx+1} , ${my} )`,`( ${mx} , ${my-1} )`,`( ${x1+x2} , ${y1+y2} )`]);
+  return {q:`Titik tengah ruas garis dari ${E('A('+x1+', '+y1+')')} ke ${E('B('+x2+', '+y2+')')} adalah …`,
+    choices:o.choices, correct:o.correct,
+    sol:`M = ((${x1}+${x2})/2 , (${y1}+${y2})/2) = (${(x1+x2)/2} , ${(y1+y2)/2}) = ${E(correct)}.`};
+}
+function g_geoGradien(){
+  let m=randInt(-3,3); if(m===0) m=2;
+  const dx=pick([1,2,3]), x1=randInt(-4,3), y1=randInt(-4,3);
+  const x2=x1+dx, y2=y1+m*dx;
+  const o=mc(String(m),[String(-m),String(m+1),String(m-2)]);
+  return {q:`Gradien garis yang melalui titik ${E('A('+x1+', '+y1+')')} dan ${E('B('+x2+', '+y2+')')} adalah …`,
+    choices:o.choices, correct:o.correct,
+    sol:`m = (y₂−y₁)/(x₂−x₁) = (${y2}−${y1})/(${x2}−${x1}) = ${y2-y1}/${x2-x1} = <b>${m}</b>.`};
+}
+const KONSEP=[
+ {q:"Dua garis yang terletak pada satu bidang dan tidak memiliki titik persekutuan disebut garis …", b:"sejajar", s:["berpotongan","bersilangan","berimpit"]},
+ {q:"Dua garis yang tidak terletak pada satu bidang dan tidak berpotongan disebut garis …", b:"bersilangan", s:["sejajar","berpotongan","berimpit"]},
+ {q:"Banyak dimensi yang dimiliki sebuah bidang adalah …", b:"2", s:["0","1","3"]},
+ {q:"Perpotongan dua bidang yang berpotongan berupa sebuah …", b:"garis", s:["titik","bidang","ruang"]},
+ {q:"Sebuah titik memiliki dimensi sebanyak …", b:"0", s:["1","2","3"]},
+ {q:"Himpunan semua titik membentuk …", b:"ruang", s:["garis","bidang","sudut"]}
+];
+function g_geoKonsep(){
+  const k=pick(KONSEP);
+  const o=mc(k.b,k.s);
+  return {q:k.q, choices:o.choices, correct:o.correct,
+    sol:`Jawaban yang tepat: <b>${k.b}</b>.`};
+}
+
+/* ===================== Peta generator ===================== */
+const GEN={
+ 1:[g_logTabel,g_logKontra,g_logTarik,g_logNegasi],
+ 2:[g_himIE2,g_himWord,g_himIE3,g_himOps],
+ 3:[g_plsv,g_plsv2,g_spldv],
+ 4:[g_pkFaktor,g_pkDisk,g_pkJumKali],
+ 5:[g_tidaksama],
+ 6:[g_fnPuncak,g_fnSumbu,g_fnEkstrem],
+ 7:[g_geoJarak,g_geoTengah,g_geoGradien,g_geoKonsep]
+};
+
+/* ===================== Mesin latihan ===================== */
+const state={}, skor={};
+function soalBaru(t){
+  const item=pick(GEN[t])();
+  item.done=false; state[t]=item;
+  document.getElementById('soal-'+t).innerHTML=item.q;
+  const wrap=document.getElementById('opsi-'+t); wrap.innerHTML='';
+  item.choices.forEach((c,i)=>{
+    const b=document.createElement('button');
+    b.className='opsi'; b.type='button';
+    b.innerHTML='<span class="lab">'+String.fromCharCode(65+i)+'</span><span class="txt">'+c+'</span>';
+    b.addEventListener('click',()=>pilih(t,i));
+    wrap.appendChild(b);
+  });
+  const fb=document.getElementById('fb-'+t); fb.textContent=''; fb.className='fb';
+  const bh=document.getElementById('bahas-'+t); bh.style.display='none'; bh.innerHTML='';
+}
+function pilih(t,i){
+  const item=state[t]; if(!item||item.done) return; item.done=true;
+  const btns=document.getElementById('opsi-'+t).children;
+  for(let j=0;j<btns.length;j++){
+    btns[j].disabled=true;
+    if(j===item.correct) btns[j].classList.add('benar');
+    else if(j===i) btns[j].classList.add('salah');
+    else btns[j].classList.add('redup');
+  }
+  const ok=(i===item.correct);
+  const fb=document.getElementById('fb-'+t);
+  fb.textContent = ok ? '✓ Benar!' : '✗ Belum tepat.';
+  fb.className='fb '+(ok?'ok':'no');
+  const bh=document.getElementById('bahas-'+t);
+  bh.innerHTML='<b>Pembahasan.</b> '+item.sol; bh.style.display='block';
+  skor[t].t++; if(ok) skor[t].b++; updateSkor(t);
+}
+function updateSkor(t){ document.getElementById('skor-'+t).textContent='Skor '+skor[t].b+'/'+skor[t].t; }
+function resetSkor(t){ skor[t]={b:0,t:0}; updateSkor(t); soalBaru(t); }
+
+/* ===================== Navigasi ===================== */
+function tampil(t){
+  document.querySelectorAll('.topik').forEach(s=>s.classList.remove('show'));
+  document.getElementById('topik-'+t).classList.add('show');
+  document.querySelectorAll('#menu button').forEach(b=>{
+    const on=(+b.dataset.t===t); b.classList.toggle('aktif',on);
+    if(on) b.setAttribute('aria-current','true'); else b.removeAttribute('aria-current');
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('#menu button').forEach(b=>{
+  b.addEventListener('click',()=>tampil(+b.dataset.t));
+});
+
+/* ===================== Inisialisasi ===================== */
+for(let t=1;t<=7;t++){ skor[t]={b:0,t:0}; soalBaru(t); }
+tampil(1);
+</script>
+</body>
+</html>
