@@ -718,32 +718,65 @@ function g_himWord(){
     sol:`Suka minimal satu = n(M∪I) = ${A}+${B}−${both} = ${A+B-both}. Tidak suka keduanya = ${total} − ${A+B-both} = <b>${ans}</b>.`};
 }
 function g_himIE3(){
-  const nA=randInt(15,30),nB=randInt(15,30),nC=randInt(15,30);
-  const nAB=randInt(4,9),nAC=randInt(4,9),nBC=randInt(4,9),nABC=randInt(1,4);
-  const ans=nA+nB+nC-nAB-nAC-nBC+nABC;
+  const hanyaA=randInt(4,10), hanyaB=randInt(4,10), hanyaC=randInt(4,10);
+  const hanyaAB=randInt(2,6), hanyaAC=randInt(2,6), hanyaBC=randInt(2,6), nABC=randInt(1,4);
+  const nA=hanyaA+hanyaAB+hanyaAC+nABC;
+  const nB=hanyaB+hanyaAB+hanyaBC+nABC;
+  const nC=hanyaC+hanyaAC+hanyaBC+nABC;
+  const nAB=hanyaAB+nABC, nAC=hanyaAC+nABC, nBC=hanyaBC+nABC;
+  const ans=hanyaA+hanyaB+hanyaC+hanyaAB+hanyaAC+hanyaBC+nABC;
   const o=mc(String(ans),[String(nA+nB+nC-nAB-nAC-nBC-nABC),String(nA+nB+nC),String(nA+nB+nC-nAB-nAC-nBC),String(ans+2*nABC)]);
   return {q:`Diketahui ${E('n(A)='+nA)}, ${E('n(B)='+nB)}, ${E('n(C)='+nC)}, ${E('n(A∩B)='+nAB)}, ${E('n(A∩C)='+nAC)}, ${E('n(B∩C)='+nBC)}, ${E('n(A∩B∩C)='+nABC)}. Nilai ${E('n(A∪B∪C)')} adalah …`,
     choices:o.choices, correct:o.correct,
     sol:`n(A∪B∪C) = ${nA}+${nB}+${nC} − ${nAB} − ${nAC} − ${nBC} + ${nABC} = <b>${ans}</b>.`};
 }
 function g_himOps(){
-  const univ=[1,2,3,4,5,6,7,8,9];
-  const A=shuffle(univ).slice(0,randInt(4,5)).sort((x,y)=>x-y);
-  const B=shuffle(univ).slice(0,randInt(4,5)).sort((x,y)=>x-y);
+  const set=arr=>arr.length?'{ '+arr.join(', ')+' }':'∅';
+  const awal=randInt(-5,7), banyak=randInt(9,12);
+  const S=Array.from({length:banyak},(_,i)=>awal+i);
+  const acak=shuffle(S), bagian=[[],[],[],[]];
+  acak.slice(0,4).forEach((x,i)=>bagian[i].push(x));
+  acak.slice(4).forEach(x=>bagian[randInt(0,3)].push(x));
+  const urut=arr=>arr.slice().sort((a,b)=>a-b);
+  const [hanyaA,hanyaB,keduanya,diLuar]=bagian.map(urut);
+  const A=urut([...hanyaA,...keduanya]);
+  const B=urut([...hanyaB,...keduanya]);
+  const gabungan=urut([...hanyaA,...hanyaB,...keduanya]);
+  const irisan=keduanya;
+  const komplemenA=urut([...hanyaB,...diLuar]);
+  const komplemenB=urut([...hanyaA,...diLuar]);
+  const komplemenGabungan=diLuar;
+  const komplemenIrisan=urut([...hanyaA,...hanyaB,...diLuar]);
   const ops=[
-    {n:"A ∩ B", f:A.filter(x=>B.includes(x))},
-    {n:"A ∪ B", f:[...new Set([...A,...B])].sort((x,y)=>x-y)},
-    {n:"A − B", f:A.filter(x=>!B.includes(x))}
+    {n:'A ∪ B', f:gabungan, arti:'Gabungan memuat setiap anggota yang berada di A atau B.'},
+    {n:'A ∩ B', f:irisan, arti:'Irisan hanya memuat anggota yang sekaligus berada di A dan B.'},
+    {n:'A − B', f:hanyaA, arti:'Selisih A − B memuat anggota A yang tidak berada di B.'},
+    {n:'B − A', f:hanyaB, arti:'Selisih B − A memuat anggota B yang tidak berada di A.'},
+    {n:'A<sup>c</sup>', f:komplemenA, arti:'Komplemen A memuat anggota semesta S yang tidak berada di A.'},
+    {n:'B<sup>c</sup>', f:komplemenB, arti:'Komplemen B memuat anggota semesta S yang tidak berada di B.'},
+    {n:'(A ∪ B)<sup>c</sup>', f:komplemenGabungan, arti:'Komplemen gabungan memuat anggota S yang berada di luar A maupun B.'},
+    {n:'(A ∩ B)<sup>c</sup>', f:komplemenIrisan, arti:'Komplemen irisan memuat semua anggota S kecuali anggota yang sekaligus berada di A dan B.'}
   ];
-  const op=pick(ops);
-  const set=arr=>'{ '+(arr.length?arr.join(', '):' ')+' }';
-  const correct=set(op.f);
-  const wrong=ops.filter(o=>o.n!==op.n).map(o=>set(o.f));
-  wrong.push(set([...new Set([...A,...B])].filter(x=>!(A.includes(x)&&B.includes(x))).sort((a,b)=>a-b)));
-  const o=mc(correct,wrong);
-  return {q:`Diketahui ${E('A = '+set(A))} dan ${E('B = '+set(B))}. Hasil ${E(op.n)} adalah …`,
+  const op=pick(ops), correct=set(op.f);
+  const calon=shuffle([...new Set(ops.map(x=>set(x.f)).filter(x=>x!==correct))]);
+  const o=mc(correct,calon);
+  return {q:`Diketahui ${E('S = '+set(S))}, ${E('A = '+set(A))}, dan ${E('B = '+set(B))}. Hasil ${E(op.n)} adalah …`,
     choices:o.choices, correct:o.correct,
-    sol:`${op.n} = ${E(correct)} (${op.n.includes('∩')?'anggota yang ada di A sekaligus di B':op.n.includes('∪')?'gabungan semua anggota A dan B':'anggota A yang tidak ada di B'}).`};
+    sol:`${op.n} = ${E(correct)}. ${op.arti}`};
+}
+function g_himKartesius(){
+  const set=arr=>'{ '+arr.join(', ')+' }';
+  const awal=randInt(-4,8);
+  const S=Array.from({length:8},(_,i)=>awal+i);
+  const acak=shuffle(S), A=acak.slice(0,2).sort((a,b)=>a-b), B=acak.slice(2,4).sort((a,b)=>a-b);
+  const produk=(X,Y)=>'{ '+X.flatMap(x=>Y.map(y=>`(${x}, ${y})`)).join(', ')+' }';
+  const balik=Math.random()<.5;
+  const kiri=balik?B:A, kanan=balik?A:B, nama=balik?'B × A':'A × B';
+  const correct=produk(kiri,kanan);
+  const o=mc(correct,[produk(kanan,kiri),produk(A,A),produk(B,B)]);
+  return {q:`Diketahui ${E('S = '+set(S))}, ${E('A = '+set(A))}, dan ${E('B = '+set(B))}. Hasil ${E(nama)} adalah …`,
+    choices:o.choices, correct:o.correct,
+    sol:`${nama} memasangkan setiap anggota himpunan pertama sebagai koordinat pertama dengan setiap anggota himpunan kedua sebagai koordinat kedua. Jadi ${E(nama+' = '+correct)}.`};
 }
 
 /* ===================== GENERATOR — Persamaan Linier ===================== */
@@ -909,7 +942,7 @@ function g_geoKonsep(){
 /* ===================== Peta generator ===================== */
 const GEN={
  1:[g_logTabel,g_logKontra,g_logTarik,g_logNegasi],
- 2:[g_himIE2,g_himWord,g_himIE3,g_himOps],
+ 2:[g_himIE2,g_himWord,g_himIE3,g_himOps,g_himOps,g_himKartesius],
  3:[g_plsv,g_plsv2,g_spldv],
  4:[g_pkFaktor,g_pkDisk,g_pkJumKali],
  5:[g_tidaksama],
