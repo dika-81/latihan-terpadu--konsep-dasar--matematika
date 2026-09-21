@@ -779,6 +779,110 @@ function g_himKartesius(){
     sol:`${nama} memasangkan setiap anggota himpunan pertama sebagai koordinat pertama dengan setiap anggota himpunan kedua sebagai koordinat kedua. Jadi ${E(nama+' = '+correct)}.`};
 }
 
+/* ---------- Himpunan: diagram Venn berarsir (tanpa angka) ---------- */
+const VENN_DESC={
+  both :'daerah irisan di tengah, yaitu bagian yang sekaligus milik A dan B',
+  onlyA:'bagian A yang berada di luar B',
+  onlyB:'bagian B yang berada di luar A',
+  luar :'daerah di dalam semesta S tetapi di luar kedua lingkaran'
+};
+const VENN_OPS=[
+ {n:'A ∩ B',                r:['both'],                  d:'anggota yang berada di A <b>dan</b> di B'},
+ {n:'A ∪ B',                r:['onlyA','both','onlyB'],  d:'anggota yang berada di A <b>atau</b> di B'},
+ {n:'A − B',                r:['onlyA'],                 d:'anggota A yang <b>bukan</b> anggota B'},
+ {n:'B − A',                r:['onlyB'],                 d:'anggota B yang <b>bukan</b> anggota A'},
+ {n:'A<sup>c</sup>',        r:['onlyB','luar'],          d:'semua anggota semesta S yang <b>bukan</b> anggota A'},
+ {n:'B<sup>c</sup>',        r:['onlyA','luar'],          d:'semua anggota semesta S yang <b>bukan</b> anggota B'},
+ {n:'(A ∪ B)<sup>c</sup>',  r:['luar'],                  d:'anggota S yang berada di luar A maupun di luar B'},
+ {n:'(A ∩ B)<sup>c</sup>',  r:['onlyA','onlyB','luar'],  d:'semua anggota S kecuali yang berada di A sekaligus B'}
+];
+/* daerah yang otomatis kosong pada tiap posisi lingkaran */
+const VENN_KOSONG={iris:[], lepas:['both'], subset:['onlyA']};
+const VENN_CATATAN={
+  iris  :'',
+  lepas :' Perhatikan: pada diagram ini A dan B <b>saling lepas</b>, sehingga A ∩ B = ∅.',
+  subset:' Perhatikan: pada diagram ini A seluruhnya berada di dalam B (A ⊂ B), sehingga A − B = ∅ dan A ∩ B = A.'
+};
+/* tanda-tangan arsiran: dua notasi dengan tanda-tangan sama berarti arsirannya identik */
+function vennSig(r,layout){const k=VENN_KOSONG[layout]; return r.filter(x=>!k.includes(x)).sort().join('|');}
+function vennDaftar(r,layout){
+  const k=VENN_KOSONG[layout], t=r.filter(x=>!k.includes(x)).map(x=>VENN_DESC[x]);
+  return t.length>1 ? t.slice(0,-1).join(', ')+' dan '+t[t.length-1] : t[0];
+}
+/* ambil n notasi lain yang arsirannya pasti berbeda dari kunci */
+function vennPengecoh(sig,layout,n){
+  const seen=new Set([sig]), out=[];
+  for(const o of shuffle(VENN_OPS)){
+    const s=vennSig(o.r,layout);
+    if(seen.has(s)) continue;
+    seen.add(s); out.push(o);
+    if(out.length===n) break;
+  }
+  return out;
+}
+let vennUid=0;
+function vennSVG(regions,layout,lebar){
+  const G = layout==='lepas'  ? {A:{x:74,y:78,r:40},  B:{x:166,y:78,r:40}, la:[74,56],  lb:[166,56]}
+          : layout==='subset' ? {A:{x:112,y:80,r:26}, B:{x:122,y:78,r:54}, la:[112,86], lb:[122,45]}
+          :                     {A:{x:98,y:78,r:46},  B:{x:142,y:78,r:46}, la:[72,58],  lb:[168,58]};
+  const id='vn'+(++vennUid);
+  const cir=(c,extra)=>`<circle cx="${c.x}" cy="${c.y}" r="${c.r}" ${extra}/>`;
+  const RECT='<rect x="6" y="6" width="228" height="138" rx="9"';
+  const ars=`url(#${id}h)`;
+  let defs=`<pattern id="${id}h" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">`
+          +`<rect width="9" height="9" fill="rgba(43,74,203,.09)"/>`
+          +`<line x1="0" y1="0" x2="0" y2="9" stroke="#2B4ACB" stroke-width="2.4" opacity=".55"/></pattern>`;
+  let body='';
+  regions.forEach(rg=>{
+    if(rg==='both'){
+      defs+=`<clipPath id="${id}ca">${cir(G.A,'')}</clipPath>`;
+      body+=`<g clip-path="url(#${id}ca)">${cir(G.B,`fill="${ars}"`)}</g>`;
+    }else if(rg==='onlyA'){
+      defs+=`<mask id="${id}ma">${cir(G.A,'fill="#fff"')}${cir(G.B,'fill="#000"')}</mask>`;
+      body+=cir(G.A,`fill="${ars}" mask="url(#${id}ma)"`);
+    }else if(rg==='onlyB'){
+      defs+=`<mask id="${id}mb">${cir(G.B,'fill="#fff"')}${cir(G.A,'fill="#000"')}</mask>`;
+      body+=cir(G.B,`fill="${ars}" mask="url(#${id}mb)"`);
+    }else{
+      defs+=`<mask id="${id}mo">${RECT} fill="#fff"/>${cir(G.A,'fill="#000"')}${cir(G.B,'fill="#000"')}</mask>`;
+      body+=`${RECT} fill="${ars}" mask="url(#${id}mo)"/>`;
+    }
+  });
+  return `<svg viewBox="0 0 240 150" role="img" aria-label="Diagram Venn dua himpunan dengan daerah arsiran"`
+    +` style="width:100%;max-width:${lebar};height:auto;display:block;margin:10px auto">`
+    +`<defs>${defs}</defs>`
+    +`${RECT} fill="#FFFFFF" stroke="#8A93A6" stroke-width="1.2"/>`
+    +body
+    +cir(G.A,'fill="none" stroke="#2B4ACB" stroke-width="1.6"')
+    +cir(G.B,'fill="none" stroke="#D6443C" stroke-width="1.6"')
+    +`<text x="18" y="27" font-family="Georgia" font-size="15" fill="#586277">S</text>`
+    +`<text x="${G.la[0]}" y="${G.la[1]}" font-family="Georgia" font-size="17" fill="#1E37A8" text-anchor="middle">A</text>`
+    +`<text x="${G.lb[0]}" y="${G.lb[1]}" font-family="Georgia" font-size="17" fill="#D6443C" text-anchor="middle">B</text>`
+    +`</svg>`;
+}
+/* gambar → notasi */
+function g_himVennArsir(){
+  const layout=pick(['iris','iris','iris','iris','lepas','subset']);
+  const op=pick(VENN_OPS.filter(o=>vennSig(o.r,layout)!==''));
+  const sig=vennSig(op.r,layout);
+  const o=mc(op.n, vennPengecoh(sig,layout,3).map(x=>x.n));
+  return {q:`Perhatikan diagram Venn berikut.${vennSVG(op.r,layout,'270px')}Daerah yang <b>diarsir</b> menyatakan …`,
+    choices:o.choices, correct:o.correct,
+    sol:`Arsiran menutup ${vennDaftar(op.r,layout)}. Daerah itu persis definisi ${E(op.n)}, yaitu ${op.d}.${VENN_CATATAN[layout]}`};
+}
+/* notasi → gambar */
+function g_himVennGambar(){
+  const layout=pick(['iris','iris','iris','lepas','subset']);
+  const op=pick(VENN_OPS.filter(o=>vennSig(o.r,layout)!==''));
+  const sig=vennSig(op.r,layout);
+  const o=mc(vennSVG(op.r,layout,'160px'), vennPengecoh(sig,layout,3).map(x=>vennSVG(x.r,layout,'160px')));
+  const hint = layout==='lepas'  ? ' Pada semua pilihan, A dan B saling lepas.'
+             : layout==='subset' ? ' Pada semua pilihan, A berada seluruhnya di dalam B.' : '';
+  return {q:`Manakah diagram Venn yang daerah arsirnya menyatakan ${E(op.n)}?${hint}`,
+    choices:o.choices, correct:o.correct,
+    sol:`${E(op.n)} adalah ${op.d} — yaitu ${vennDaftar(op.r,layout)}.${VENN_CATATAN[layout]} Diagram yang benar:${vennSVG(op.r,layout,'210px')}`};
+}
+
 /* ===================== GENERATOR — Persamaan Linier ===================== */
 function g_plsv(){
   const a=randInt(2,7), x=randInt(-6,9), b=randInt(-9,9), c=a*x+b;
@@ -942,7 +1046,7 @@ function g_geoKonsep(){
 /* ===================== Peta generator ===================== */
 const GEN={
  1:[g_logTabel,g_logKontra,g_logTarik,g_logNegasi],
- 2:[g_himIE2,g_himWord,g_himIE3,g_himOps,g_himOps,g_himKartesius],
+ 2:[g_himIE2,g_himWord,g_himIE3,g_himOps,g_himOps,g_himKartesius,g_himVennArsir,g_himVennArsir,g_himVennGambar],
  3:[g_plsv,g_plsv2,g_spldv],
  4:[g_pkFaktor,g_pkDisk,g_pkJumKali],
  5:[g_tidaksama],
