@@ -912,6 +912,59 @@ function g_spldv(){
     sol:`Dengan eliminasi/substitusi diperoleh <b>x = ${x}</b> dan <b>y = ${y}</b>. Periksa: ${a1}(${x})${b1>=0?'+':'−'}${Math.abs(b1)}(${y}) = ${c1}. ✓`};
 }
 
+/* Soal aplikasi: dibangun dari solusi positif agar konteks selalu masuk akal. */
+function rupiah(n){return 'Rp'+n.toLocaleString('id-ID');}
+function soalAplikasi(q,ans,step,format,sol){
+  const o=mc(format(ans),[format(ans-step),format(ans+step),format(ans+2*step)]);
+  return {q,choices:o.choices,correct:o.correct,sol};
+}
+function g_linBelanja(){
+  const barang=pick(['buku tulis','pensil','penghapus','roti','botol air mineral']);
+  const n=randInt(3,9), harga=randInt(2,15)*1000, tambahan=randInt(2,8)*1000, total=n*harga+tambahan;
+  return soalAplikasi(`Harga setiap ${barang} sama. Dina membeli ${n} ${barang} dan sebuah kantong hadiah seharga ${rupiah(tambahan)}. Total belanja ${rupiah(total)}. Berapa harga satu ${barang}?`,harga,1000,rupiah,
+    `Misalkan x harga satu ${barang}. ${E(n+'x + '+tambahan+' = '+total)}. Maka ${n}x = ${total-tambahan}, sehingga x = ${total-tambahan}/${n} = <b>${rupiah(harga)}</b>.`);
+}
+function g_linKembalian(){
+  const barang=pick(['pena','buku tulis','roti']), n=randInt(3,12), harga=randInt(2,8)*1000, kembali=randInt(1,9)*1000, bayar=n*harga+kembali;
+  return soalAplikasi(`Rani membeli beberapa ${barang} dengan harga ${rupiah(harga)} per buah. Ia membayar ${rupiah(bayar)} dan menerima kembalian ${rupiah(kembali)}. Berapa buah ${barang} yang dibeli?`,n,1,v=>v+' buah',
+    `Misalkan x banyak ${barang}. ${E(harga+'x = '+bayar+' − '+kembali)}. Jadi x = ${bayar-kembali}/${harga} = <b>${n} buah</b>.`);
+}
+function g_linUsia(){
+  const muda=randInt(7,18), selisih=randInt(3,9), waktu=randInt(2,6), lalu=Math.random()<.5;
+  const jumlah=2*muda+selisih+(lalu?-2:2)*waktu;
+  const kapan=lalu?`${waktu} tahun yang lalu`:`${waktu} tahun lagi`;
+  const tanda=lalu?'−':'+';
+  return soalAplikasi(`Usia kakak ${selisih} tahun lebih tua daripada adik. Jumlah usia mereka ${kapan} adalah ${jumlah} tahun. Berapa usia adik sekarang?`,muda,1,v=>v+' tahun',
+    `Misalkan x usia adik sekarang, maka usia kakak x + ${selisih}. ${E('(x '+tanda+' '+waktu+') + (x + '+selisih+' '+tanda+' '+waktu+') = '+jumlah)}. Jadi 2x = ${2*muda}, sehingga usia adik sekarang <b>${muda} tahun</b>.`);
+}
+function g_linTabungan(){
+  const awal=randInt(2,10)*10000, rutin=randInt(1,5)*5000, minggu=randInt(4,16), target=awal+rutin*minggu;
+  return soalAplikasi(`Tabungan awal Bayu ${rupiah(awal)}. Setiap akhir minggu ia menambah ${rupiah(rutin)} tanpa mengambil uangnya. Setelah berapa minggu tabungannya menjadi ${rupiah(target)}?`,minggu,1,v=>v+' minggu',
+    `Misalkan x banyak minggu. ${E(awal+' + '+rutin+'x = '+target)}. Maka x = (${target} − ${awal})/${rutin} = <b>${minggu} minggu</b>.`);
+}
+function g_linTarif(){
+  const awal=randInt(5,12)*1000, tarif=randInt(2,5)*1000, jarak=randInt(3,20), total=awal+tarif*jarak;
+  return soalAplikasi(`Tarif taksi terdiri atas biaya awal ${rupiah(awal)} ditambah ${rupiah(tarif)} untuk setiap kilometer perjalanan. Jika total biaya ${rupiah(total)}, berapa jarak perjalanan?`,jarak,1,v=>v+' km',
+    `Misalkan x jarak dalam km. ${E(awal+' + '+tarif+'x = '+total)}. Jadi x = (${total} − ${awal})/${tarif} = <b>${jarak} km</b>.`);
+}
+function g_linKeliling(){
+  const lebar=randInt(4,20), selisih=randInt(2,10), keliling=4*lebar+2*selisih;
+  return soalAplikasi(`Sebuah taman berbentuk persegi panjang. Panjangnya ${selisih} meter lebih dari lebarnya dan kelilingnya ${keliling} meter. Berapa lebar taman?`,lebar,1,v=>v+' meter',
+    `Misalkan x lebar taman, maka panjangnya x + ${selisih}. ${E('2(x + x + '+selisih+') = '+keliling)}. Maka 4x = ${keliling} − ${2*selisih} = ${4*lebar}, sehingga lebar taman <b>${lebar} meter</b>.`);
+}
+function g_linDuaBarang(){
+  const [barang1,barang2]=pick([['buku tulis','pena'],['roti','kotak susu'],['penggaris','penghapus']]);
+  const x=randInt(4,12)*1000, y=randInt(2,8)*1000, a=randInt(2,5), b=randInt(1,4), tambah=randInt(1,3);
+  const total1=a*x+b*y, total2=(a+tambah)*x+b*y;
+  return soalAplikasi(`Di toko yang sama, ${a} ${barang1} dan ${b} ${barang2} berharga ${rupiah(total1)}. Sementara itu, ${a+tambah} ${barang1} dan ${b} ${barang2} berharga ${rupiah(total2)}. Harga satuan masing-masing barang tetap. Berapa harga satu ${barang2}?`,y,1000,rupiah,
+    `Misalkan x harga satu ${barang1}, y harga satu ${barang2}. ${E(a+'x + '+b+'y = '+total1)} dan ${E((a+tambah)+'x + '+b+'y = '+total2)}. Kurangkan persamaan pertama dari kedua: ${tambah}x = ${total2-total1}, maka x = ${x}. Substitusi: ${b}y = ${total1} − ${a*x} = ${b*y}, sehingga y = <b>${rupiah(y)}</b>.`);
+}
+function g_linTiket(){
+  const dewasa=randInt(5,25), anak=randInt(5,25), murah=randInt(1,4)*10000, mahal=murah+randInt(1,3)*10000, jumlah=dewasa+anak, total=dewasa*mahal+anak*murah;
+  return soalAplikasi(`Terjual ${jumlah} tiket masuk, terdiri atas tiket dewasa seharga ${rupiah(mahal)} dan tiket anak seharga ${rupiah(murah)}. Total pendapatan ${rupiah(total)}. Berapa tiket dewasa yang terjual?`,dewasa,1,v=>v+' tiket',
+    `Misalkan x banyak tiket dewasa, maka tiket anak ${jumlah} − x. ${E(mahal+'x + '+murah+'('+jumlah+' − x) = '+total)}. Jadi ${mahal-murah}x = ${total} − ${murah*jumlah} = ${(mahal-murah)*dewasa}, sehingga x = <b>${dewasa} tiket</b>.`);
+}
+
 /* ===================== GENERATOR — Persamaan Kuadrat ===================== */
 function g_pkFaktor(){
   let r1=randInt(-7,7), r2=randInt(-7,7); while(r2===r1) r2=randInt(-7,7);
@@ -1047,7 +1100,7 @@ function g_geoKonsep(){
 const GEN={
  1:[g_logTabel,g_logKontra,g_logTarik,g_logNegasi],
  2:[g_himIE2,g_himWord,g_himIE3,g_himOps,g_himOps,g_himKartesius,g_himVennArsir,g_himVennArsir,g_himVennGambar],
- 3:[g_plsv,g_plsv2,g_spldv],
+ 3:[g_plsv,g_plsv2,g_spldv,g_linBelanja,g_linKembalian,g_linUsia,g_linTabungan,g_linTarif,g_linKeliling,g_linDuaBarang,g_linTiket],
  4:[g_pkFaktor,g_pkDisk,g_pkJumKali],
  5:[g_tidaksama],
  6:[g_fnPuncak,g_fnSumbu,g_fnEkstrem],
